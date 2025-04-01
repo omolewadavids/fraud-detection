@@ -6,13 +6,13 @@ from sklearn.preprocessing import StandardScaler
 import joblib
 
 # Load preprocessed data
-df = pd.read_csv('data/synthetic_fraud_data.csv')
+df = pd.read_csv("data/synthetic_fraud_data.csv")
 
 # Feature columns (excluding 'is_fraud' target column)
-X = df.drop(columns=['is_fraud'])
+X = df.drop(columns=["is_fraud"])
 
 # Target column
-y = df['is_fraud']
+y = df["is_fraud"]
 
 # Encode categorical features using one-hot encoding
 X = pd.get_dummies(X, drop_first=True)
@@ -22,23 +22,31 @@ scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
 # Split data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(
+    X_scaled, y, test_size=0.2, random_state=42
+)
 
 # Define the model
 model = RandomForestClassifier(random_state=42)
 
 # Hyperparameter grid to search over
 param_grid = {
-    'n_estimators': [50, 100, 200],
-    'max_depth': [10, 20, 30, None],
-    'min_samples_split': [2, 5, 10],
-    'min_samples_leaf': [1, 2, 4],
-    'bootstrap': [True, False]
+    "n_estimators": [50, 100, 200],
+    "max_depth": [10, 20, 30, None],
+    "min_samples_split": [2, 5, 10],
+    "min_samples_leaf": [1, 2, 4],
+    "bootstrap": [True, False],
 }
 
 # GridSearchCV for hyperparameter tuning
-grid_search = GridSearchCV(estimator=model, param_grid=param_grid,
-                           cv=3, verbose=2, n_jobs=-1, scoring='accuracy')
+grid_search = GridSearchCV(
+    estimator=model,
+    param_grid=param_grid,
+    cv=3,
+    verbose=2,
+    n_jobs=-1,
+    scoring="accuracy",
+)
 
 # Fit the model using GridSearchCV
 grid_search.fit(X_train, y_train)
@@ -59,5 +67,5 @@ print("\nConfusion Matrix:")
 print(confusion_matrix(y_test, y_pred))
 
 # Save the best model
-joblib.dump(best_model, 'models/tuned_fraud_detection_model.pkl')
+joblib.dump(best_model, "models/tuned_fraud_detection_model.pkl")
 print("✅ Tuned model saved successfully!")
